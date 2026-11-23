@@ -10,11 +10,21 @@ jobs:
     environment: devShikhar_org
 
     steps:
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          owner: DevShikhar
+          repositories: |
+            devShikharGit
+
       - name: Checkout Salesforce Source
         uses: actions/checkout@v4
         with:
           repository: DevShikhar/devShikharGit
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli
