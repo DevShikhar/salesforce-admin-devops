@@ -32,7 +32,7 @@ jobs:
             --username "${{ secrets.SF_USERNAME }}" \
             --client-id "${{ secrets.SF_CONSUMER_KEY }}" \
             --jwt-key-file server.key \
-            --instance-url "${{ vars.SF_INSTANCE_URL }}"
+            --instance-url "${{ secrets.SF_INSTANCE_URL }}"
 
       - name: Validate Deployment
         run: |
