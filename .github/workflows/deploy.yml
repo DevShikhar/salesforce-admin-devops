@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Salesforce Source
         uses: actions/checkout@v4
         with:
-          repository: https://github.com/DevShikhar/devShikharGit
+          repository: DevShikhar/devShikharGit
           token: ${{ secrets.GH_PAT }}
 
       - name: Install Salesforce CLI
