@@ -1,0 +1,51 @@
+name: Salesforce Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment: devShikhar_org
+
+    steps:
+      - name: Checkout Salesforce Source
+        uses: actions/checkout@v4
+        with:
+          repository: YOURORG/salesforce-app
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli
+
+      - name: Verify Salesforce CLI
+        run: sf --version
+
+      - name: Create JWT Key
+        run: |
+          echo "${{ secrets.SF_JWT_KEY }}" > server.key
+
+      - name: Authenticate Salesforce
+        run: |
+          sf org login jwt \
+            --username "${{ secrets.SF_USERNAME }}" \
+            --client-id "${{ secrets.SF_CONSUMER_KEY }}" \
+            --jwt-key-file server.key \
+            --instance-url "${{ vars.SF_INSTANCE_URL }}"
+
+      - name: Validate Deployment
+        run: |
+          sf project deploy validate \
+            --source-dir force-app \
+            --target-org "${{ secrets.SF_USERNAME }}" \
+            --test-level RunLocalTests \
+            --wait 120
+
+      - name: Deploy Metadata
+        run: |
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org "${{ secrets.SF_USERNAME }}" \
+            --test-level RunLocalTests \
+            --wait 120
